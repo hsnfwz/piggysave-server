@@ -12,20 +12,20 @@ import { AdminMessagesPermissions } from './messages-permissions.js';
 
 const messagesRouter = express.Router();
 
-messagesRouter.get("/public", (req, res) => {
+messagesRouter.get('/public', (req, res) => {
   const message = getPublicMessage();
 
   res.status(200).json(message);
 });
 
-messagesRouter.get("/protected", validateAccessToken, (req, res) => {
+messagesRouter.get('/protected', validateAccessToken, (req, res) => {
   const message = getProtectedMessage();
 
   res.status(200).json(message);
 });
 
 messagesRouter.get(
-  "/admin",
+  '/admin',
   validateAccessToken,
   checkRequiredPermissions([AdminMessagesPermissions.Read]),
   (req, res) => {

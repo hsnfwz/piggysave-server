@@ -1,19 +1,19 @@
-import pkg from 'pg';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import nocache from 'nocache';
+
+// routers
 import { messagesRouter } from './messages/messages.router.js';
+import { transactionsRouter } from './transactions/transactions.router.js';
+
+// middleware
 import { errorHandler } from './middleware/error.middleware.js';
 import { notFoundHandler } from './middleware/not-found.middleware.js';
 
 const app = express();
 const PORT = process.env.PORT || 5174;
 const apiRouter = express.Router();
-
-/* Create a new pool using your Neon database connection string */
-const { Pool } = pkg;
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 app.use(express.json());
 /* Auth0 */
@@ -42,7 +42,7 @@ app.use(nocache());
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN_URL,
-    methods: ["GET"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization", "Content-Type"],
     maxAge: 86400,
   })
@@ -51,31 +51,21 @@ app.use(
 app.set('trust proxy', 1);
 // app.use(cors({ origin: ['http://localhost:5173', 'https://piggysave-client.onrender.com'], credentials: true }));
 
-app.use("/api", apiRouter);
-apiRouter.use("/messages", messagesRouter);
+app.use('/api', apiRouter);
+apiRouter.use('/messages', messagesRouter);
+apiRouter.use('/transactions', transactionsRouter);
 
 app.use(errorHandler);
 app.use(notFoundHandler);
 
 app.get('/', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM sandbox;');
-    res.json(rows);
+    res.status(200).json({ message: 'Hello World' });
   } catch (error) {
-    console.error('Failed to fetch sandbox', error);
+    console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 /* Start the server */
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-/* 
-
-  TODO:
-  - deploy client and server to test they work with each other
-  - authentication method
-  - create tables (user, income, expense)
-*/
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
