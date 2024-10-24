@@ -13,6 +13,30 @@ const getTransaction = async (req, res) => {
   res.status(200).json(data);
 };
 
+const getTransactionsByTotalAmountPerYear = async (req, res) => {
+  const userId = req.auth.payload.sub;
+  const type = req.params.type;
+  const data = await TransactionsService.getTransactionsByTotalAmountPerYear(userId, type);
+  res.status(200).json(data);
+}
+
+const getTransactionsByTotalAmountPerMonth = async (req, res) => {
+  const userId = req.auth.payload.sub;
+  const year = req.params.year;
+  const type = req.params.type;
+  const data = await TransactionsService.getTransactionsByTotalAmountPerMonth(userId, year, type);
+  res.status(200).json(data);
+}
+
+const getTransactionsByTotalAmountPerDay = async (req, res) => {
+  const userId = req.auth.payload.sub;
+  const year = req.params.year;
+  const month = req.params.month;
+  const type = req.params.type;
+  const data = await TransactionsService.getTransactionsByTotalAmountPerDay(userId, year, month, type);
+  res.status(200).json(data);
+}
+
 const addTransaction = async (req, res) => {
   const userId = req.auth.payload.sub;
   const body = req.body;
@@ -42,6 +66,9 @@ const notFound = (req, res) => {
 export {
   getTransactions,
   getTransaction,
+  getTransactionsByTotalAmountPerYear,
+  getTransactionsByTotalAmountPerMonth,
+  getTransactionsByTotalAmountPerDay,
   addTransaction,
   updateTransaction,
   removeTransaction,

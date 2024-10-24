@@ -5,7 +5,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const getTransactions = async (userId) => {
   try {
     const values = [userId];
-    const sql = 'select * from transaction where profile_id=$1';
+    const sql = 'select * from transaction where profile_id=$1 order by date_time_utc desc';
     const data = await pool.query(sql, values);
   
     return {
@@ -29,6 +29,48 @@ const getTransaction = async (userId, transactionId) => {
     return { message: error };
   }
 };
+
+const getTransactionsByTotalAmountPerYear = async (userId, type) => {
+  try {
+    const values = [userId, type];
+    const sql = `select sum(amount) as total_amount, date_trunc('year', date_time_utc) as year from transaction where profile_id=$1 and type=$2 group by year`;
+    const data = await pool.query(sql, values);
+  
+    return {
+      data
+    };
+  } catch (error) {
+    return { message, error };
+  }
+}
+
+const getTransactionsByTotalAmountPerMonth = async (userId, year, type) => {
+  try {
+    const values = [userId, year, type];
+    const sql = `select sum(amount) as total_amount, date_trunc('month', date_time_utc) as month from transaction where profile_id=$1 and date_part('year', date_time_utc)=$2 and type=$3 group by month`;
+    const data = await pool.query(sql, values);
+  
+    return {
+      data
+    };
+  } catch (error) {
+    return { message, error };
+  }
+}
+
+const getTransactionsByTotalAmountPerDay = async (userId, year, month, type) => {
+  try {
+    const values = [userId, year, month, type];
+    const sql = `select sum(amount) as total_amount, date_trunc('day', date_time_utc) as day from transaction where profile_id=$1 and date_part('year', date_time_utc)=$2 and date_part('month', date_time_utc)=$3 and type=$4 group by day`;
+    const data = await pool.query(sql, values);
+  
+    return {
+      data
+    };
+  } catch (error) {
+    return { message, error };
+  }
+}
 
 const addTransaction = async (userId, body) => {
   try {
@@ -131,6 +173,9 @@ const removeTransaction = async (userId, transactionId) => {
 export {
   getTransactions,
   getTransaction,
+  getTransactionsByTotalAmountPerYear,
+  getTransactionsByTotalAmountPerMonth,
+  getTransactionsByTotalAmountPerDay,
   addTransaction,
   updateTransaction,
   removeTransaction,
