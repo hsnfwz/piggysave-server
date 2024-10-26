@@ -13,11 +13,8 @@ const removeProfile = async (userId) => {
   }
 };
 
-const addProfile = async (body) => {
+const addProfile = async (userId) => {
   try {
-    const {
-      userId,
-    } = body;
     const values = [userId];
     const sql = 'insert into profile (profile_id) values ($1) returning *';
     const data = await pool.query(sql, values);
