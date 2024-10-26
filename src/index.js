@@ -50,7 +50,6 @@ app.use(
 );
 /* Set for Render deployment */
 app.set('trust proxy', 1);
-// app.use(cors({ origin: ['http://localhost:5173', 'https://piggysave-client.onrender.com'], credentials: true }));
 
 app.use('/api', apiRouter);
 apiRouter.use('/messages', messagesRouter);
