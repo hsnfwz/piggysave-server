@@ -17,21 +17,11 @@ const addProfile = async (body) => {
   try {
     const {
       userId,
-      event
     } = body;
-
-    console.log(userId, event);
-
-    return {
-      message: 'Here is what I received',
-      userId,
-      event
-    }
-
-    // const values = [userId];
-    // const sql = 'insert into profile (profile_id) values ($1) returning *';
-    // const data = await pool.query(sql, values);
-    // return data;
+    const values = [userId];
+    const sql = 'insert into profile (profile_id) values ($1) returning *';
+    const data = await pool.query(sql, values);
+    return data;
   } catch(error) {
     throw(error);
   }

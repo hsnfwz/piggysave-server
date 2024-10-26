@@ -49,9 +49,8 @@ const addProfile = async (req, res) => {
   try {
     const {
       userId,
-      event
     } = req.body;
-    const data = await ProfilesService.addProfile(userId, event);
+    const data = await ProfilesService.addProfile(userId);
     res.status(201).json({ data });
   } catch (error) {
     res.status(500).json({ error });
