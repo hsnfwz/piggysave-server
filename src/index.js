@@ -58,7 +58,7 @@ apiRouter.use('/transactions', transactionsRouter);
 apiRouter.use('/profiles', profilesRouter);
 
 app.use(errorHandler);
-app.use(notFoundHandler);
+// app.use(notFoundHandler);
 
 app.get('/', async (req, res) => {
   try {
