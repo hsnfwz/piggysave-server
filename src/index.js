@@ -6,6 +6,7 @@ import nocache from 'nocache';
 // routers
 import { messagesRouter } from './messages/messages.router.js';
 import { transactionsRouter } from './transactions/transactions.router.js';
+import { profilesRouter } from './profiles/profiles.router.js';
 
 // middleware
 import { errorHandler } from './middleware/error.middleware.js';
@@ -54,6 +55,7 @@ app.set('trust proxy', 1);
 app.use('/api', apiRouter);
 apiRouter.use('/messages', messagesRouter);
 apiRouter.use('/transactions', transactionsRouter);
+apiRouter.use('/profiles', profilesRouter);
 
 app.use(errorHandler);
 app.use(notFoundHandler);

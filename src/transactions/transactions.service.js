@@ -7,12 +7,9 @@ const getTransactions = async (userId) => {
     const values = [userId];
     const sql = 'select * from transaction where profile_id=$1 order by date_time_utc desc';
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch(error) {
-    return { message: error };
+    throw(error);
   }
 };
 
@@ -21,12 +18,9 @@ const getTransaction = async (userId, transactionId) => {
     const values = [userId, transactionId];
     const sql = 'select * from transaction where profile_id=$1 and transaction_id=$2';
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch(error) {
-    return { message: error };
+    throw(error);
   }
 };
 
@@ -35,12 +29,9 @@ const getTransactionsByTotalAmountPerYear = async (userId, type) => {
     const values = [userId, type];
     const sql = `select sum(amount) as total_amount, date_trunc('year', date_time_utc) as year from transaction where profile_id=$1 and type=$2 group by year`;
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch (error) {
-    return { message, error };
+    throw(error);
   }
 }
 
@@ -49,12 +40,9 @@ const getTransactionsByTotalAmountPerMonth = async (userId, year, type) => {
     const values = [userId, year, type];
     const sql = `select sum(amount) as total_amount, date_trunc('month', date_time_utc) as month from transaction where profile_id=$1 and date_part('year', date_time_utc)=$2 and type=$3 group by month`;
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch (error) {
-    return { message, error };
+    throw(error);
   }
 }
 
@@ -63,12 +51,9 @@ const getTransactionsByTotalAmountPerDay = async (userId, year, month, type) => 
     const values = [userId, year, month, type];
     const sql = `select sum(amount) as total_amount, date_trunc('day', date_time_utc) as day from transaction where profile_id=$1 and date_part('year', date_time_utc)=$2 and date_part('month', date_time_utc)=$3 and type=$4 group by day`;
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch (error) {
-    return { message, error };
+    throw(error);
   }
 }
 
@@ -81,14 +66,11 @@ const addTransaction = async (userId, body) => {
     } = body;
 
     const values = [userId, type, name, amount];
-    const sql = 'insert into transaction (profile_id, type, name, amount) values ($1, $2, $3, $4)';
+    const sql = 'insert into transaction (profile_id, type, name, amount) values ($1, $2, $3, $4) returning *';
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch(error) {
-    return { message: error };
+    throw(error);
   }
 };
 
@@ -144,29 +126,23 @@ const updateTransaction = async (userId, transactionId, body) => {
 
     values.push(userId, transactionId);
 
-    sql = sql + ' ' + `where profile_id=$${values.length-1} and transaction_id=$${values.length}`;
+    sql = sql + ' ' + `where profile_id=$${values.length-1} and transaction_id=$${values.length} returning *`;
 
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch(error) {
-    return { message: error };
+    throw(error);
   }
 };
 
 const removeTransaction = async (userId, transactionId) => {
   try {
     const values = [userId, transactionId];
-    const sql = 'delete from transaction where profile_id=$1 and transaction_id=$2';
+    const sql = 'delete from transaction where profile_id=$1 and transaction_id=$2 returning *';
     const data = await pool.query(sql, values);
-  
-    return {
-      data
-    };
+    return data;
   } catch(error) {
-    return { message: error };
+    throw(error);
   }
 };
 
